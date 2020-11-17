@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "975635263030",
+    "firebase_url": "https://smsforwarding-187a0.firebaseio.com",
+    "project_id": "smsforwarding-187a0",
+    "storage_bucket": "smsforwarding-187a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975635263030:android:60461430dc4a15734ef297",
+        "android_client_info": {
+          "package_name": "com.smstest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975635263030-rhdkpcdk6krepp96vk3sabim30m7bd2s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoTMP1fSiLwIkZiwzw4cF57MgEIrvgq0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975635263030-rhdkpcdk6krepp96vk3sabim30m7bd2s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
