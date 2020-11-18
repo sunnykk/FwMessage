@@ -187,7 +187,7 @@ class ReadSMSComponent extends React.Component {
  
   setSetting = (keyword,cellNumber) => {
     if(cellNumber==''&& keyword == ''){
-      if(this.state.keySet.phoneNumbers == 0){
+      if(this.state.keySet.phoneNumbers.length == 0){
         alert('need 1 set.');
       }else{
         this.setState({
@@ -199,8 +199,29 @@ class ReadSMSComponent extends React.Component {
     }
   }
 
+  handleRemove = id => {
+    console.log(JSON.stringify(id));
+    let keySet = this.state.keySet;
+    let phoneNumbers = keySet.phoneNumbers.filter(item => item !== id);
+    console.log(JSON.stringify(phoneNumbers)+phoneNumbers.length);
+    if(phoneNumbers.length == 0){
+      alert('한개 이상!');
+      return;
+    }
+    keySet.phoneNumbers = phoneNumbers;
+    this.setState({
+      keySet: keySet,
+    });
+
+    try {
+      AsyncStorage.setItem('keySet', JSON.stringify(keySet));
+    }catch(error){
+      console.error('AsyncStorage.setItem : ' + error);
+    }
+  }
+
   componentWillUnmount = () => {
-      ReadSms.stopReadSMS();
+    ReadSms.stopReadSMS();
   }
 
   render() {
@@ -217,7 +238,10 @@ class ReadSMSComponent extends React.Component {
       ));
 
   const cellNumberList = (this.state.keySet.phoneNumbers).map((item,idx) => (
-    <Text key={idx}>{item}</Text>
+    <View key={idx} style={{flexDirection: 'row'}}>
+      <Text>{item}</Text>
+      <Button onPress={() => this.handleRemove(item)} title="X"></Button>
+    </View>
     ));
     return <View>
               <Modal isVisible={this.state.isModalVisible}>
