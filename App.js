@@ -22,6 +22,7 @@ import SmsAndroid from 'react-native-get-sms-android';
 import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-community/async-storage';
 import dayjs from 'dayjs';
+import RNExitApp from 'react-native-exit-app';
 //import messaging from '@react-native-firebase/messaging';
 
 
@@ -38,7 +39,8 @@ class ReadSMSComponent extends React.Component {
         keySet : {
           keyword : null,
           phoneNumbers : [],
-        }
+        },
+        permissionsStatus : 'SMS 권한 확인 중',
       }
   }
 
@@ -49,8 +51,8 @@ class ReadSMSComponent extends React.Component {
 
   componentDidMount = () =>{
     console.log('componentDidMount()');
-    this.checkStorage();
-
+    //this.checkStorage();
+    this.requestSendSMSPermission();
     let now = dayjs().format('YYYY.MM.DD HH:mm');
     console.log(now)
   }
@@ -80,6 +82,9 @@ class ReadSMSComponent extends React.Component {
     console.log('startReadSMS()');
       const hasPermission = await ReadSms.requestReadSMSPermission();
       if(hasPermission) {
+          this.setState({
+            permissionsStatus: ''
+          });
           ReadSms.startReadSMS((status, sms, error) => {
               if (status == "success") {
                   console.log("Great!! you have received new sms:", sms);
@@ -105,8 +110,16 @@ class ReadSMSComponent extends React.Component {
                         },
                     );
                   }
+              }else{
+                console.log('status : '+status+' , error'+error);
               }
           });
+      }else{
+        console.log('권한없음');
+        alert('앱 재시작 부탁드립니다.');
+        this.setState({
+          permissionsStatus: '앱 재시작 부탁드립니다.'
+        });
       }
   }
 
@@ -115,18 +128,22 @@ class ReadSMSComponent extends React.Component {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.SEND_SMS,
         {
-          title: "SEND SMS Permission",
+          title: "[필수]SMS 권한 허용",
           message:
-            "We need Permission to forward message.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
+            "해당 앱의 기능을 사용하시려면 SMS 권한 허용이 필요합니다.",
+          buttonNegative: "취소",
+          buttonPositive: "확인"
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log("You can use sms");
+        this.checkStorage();
       } else {
         console.log("sms permission denied");
+        alert('해당 앱 sms 권한을 허용해주세요.');
+        this.setState({
+          permissionsStatus: 'SMS 권한 거부'
+        });
       }
     } catch (err) {
       console.warn(err);
@@ -175,7 +192,7 @@ class ReadSMSComponent extends React.Component {
     }
 
     if(!this.state.firstSetting){
-      this.startReadSMS();
+      //this.startReadSMS();
       this.setState({
         firstSetting : true
       });
@@ -247,7 +264,7 @@ class ReadSMSComponent extends React.Component {
               <Modal isVisible={this.state.isModalVisible}>
                 <View style={styles.container}>
                   <View>
-                    <Text style={{textAlign: 'center'}}>Set List</Text>
+                    <Text style={{textAlign: 'center'}}>설정 내역</Text>
                     <View style={{flexDirection: 'row', padding:5}}>
                       <Text style={{padding:5}} >{this.state.keySet.keyword}</Text>
                       <View style={{padding:5}}>{cellNumberList}</View>
@@ -257,7 +274,7 @@ class ReadSMSComponent extends React.Component {
                     <TextInput
                       style={styles.input}
                       underlineColorAndroid="transparent"
-                      placeholder="ex)keyword"
+                      placeholder="전달할 문자의 키워드"
                       placeholderTextColor="skyblue"
                       autoCapitalize="none"
                       onChangeText={this.handleKeyword}
@@ -282,11 +299,14 @@ class ReadSMSComponent extends React.Component {
               
               <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
                 <View style={styles.title}>
-                    <Text style={{ fontSize: 20,justifyContent: 'center', textAlign: 'center', marginTop: 5, fontWeight: 'bold'}}>Forward List</Text>
+                    <Text style={{ fontSize: 20,justifyContent: 'center', textAlign: 'center', marginTop: 5, fontWeight: 'bold'}}>전달된 문자 내역</Text>
                 </View>
                 <Button style={styles.settingBtn} title="setting" onPress={() => this.toggleModal(true)}>
                 </Button>
-            </View>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
+                    <Text style={{ fontSize: 10,justifyContent: 'center', textAlign: 'center', marginTop: 5, fontWeight: 'bold'}}>{this.state.permissionsStatus}</Text>
+              </View>
               {itemList}
           </View>
   }

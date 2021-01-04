@@ -206,6 +206,9 @@ dependencies {
 
     compile project(':react-native-get-sms-android')
 
+     compile project(':react-native-exit-app')
+
+
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")

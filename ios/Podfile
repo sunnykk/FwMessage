@@ -12,6 +12,8 @@ target 'smsTest' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
+  pod 'RNExitApp', :path => '../node_modules/react-native-exit-app'
+
   target 'smsTestTests' do
     inherit! :complete
     # Pods for testing
